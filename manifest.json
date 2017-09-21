@@ -1,0 +1,38 @@
+{
+    "manifest_version": 2,
+    "name": "type gator",
+    "version": "0.1.0",
+    "description": "Navigate web pages by typing",
+    "author": "Tony Findeisen",
+    "permissions": [
+        "activeTab",
+        "http://*/",
+        "https://*/",
+        "file://*/"
+    ],
+    "background": {
+        "scripts": [
+            "background.js"
+        ]
+    },
+    "commands": {
+        "_execute_browser_action": {
+            "suggested_key": {
+                "default": "Ctrl+Shift+F"
+            },
+            "description": "Start the type navigation"
+        }
+    },
+    "browser_action": {
+        "default_title": "",
+        "default_icon": "icon/16.png",
+        "default_popup": "popup.html"
+    },
+    "icons": {
+        "16": "icon/16.png",
+        "48": "icon/48.png",
+        "128": "icon/128.png"
+    }
+}
+
+

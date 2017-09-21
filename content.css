@@ -1,0 +1,7 @@
+.search-candidate {
+    background-color: yellow !important;
+}
+
+.search-candidate-selected {
+    background-color: orange !important;
+}

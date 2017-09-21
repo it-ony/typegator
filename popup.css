@@ -1,0 +1,70 @@
+html {
+    background: #EBEBEB;
+}
+
+button {
+    background: none;
+    border: 0 none;
+    margin: 0;
+    padding: 0 .5em;
+    display: flex;
+
+    transition: opacity 0.25s;
+}
+
+img {
+    width: 1em;
+}
+
+input {
+    min-width: 200px;
+    border: 0 none;
+    border-right: 1px solid lightgray;
+    flex: 1 1 auto;
+    padding: 0.25em 2rem 0.25em 0.5em;
+    font-size: .75rem;
+
+    transition: background .25s;
+}
+
+.no-results:not(.no-content) input {
+    background: #E87993;
+}
+
+
+.no-results button,
+.no-content button {
+    pointer-events: none;
+    opacity: 0.5;
+}
+
+.search-container {
+    position: relative;
+}
+
+.node-count {
+    position: absolute;
+    padding: 0 0.5rem;
+    background: white;
+    font-size: 0.75rem;
+    top: 0.25rem;
+    right: 1px;
+    color: gray;
+}
+
+.node-count:empty,
+.no-results .node-count {
+    display: none;
+}
+
+
+:focus {
+    outline: -webkit-focus-ring-color auto 2px;
+    outline-offset: -2px;
+}
+
+form {
+    display: flex;
+    border: 1px solid lightgray;
+    border-radius: 2px;
+}
