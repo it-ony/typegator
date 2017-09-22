@@ -8,11 +8,14 @@ chrome.tabs.query({active: true, currentWindow: true}, tabs => {
 
     chrome.tabs.executeScript(tabId, {
         file: 'content.js'
+    }, function() {
+        invoke('clear');
     });
 
     chrome.tabs.insertCSS(tabId, {
         file: 'content.css'
     });
+
 });
 
 form.addEventListener('submit', e => {
@@ -32,13 +35,13 @@ input.addEventListener('keydown', e => {
             ctrlKey: e.ctrlKey
         });
 
-        this.close();
+        invoke('clear');
     } else if (e.shiftKey && (e.code === 'Tab' || e.code === 'Enter') || e.code === 'ArrowUp') {
         navigate(e, -1);
     } else if (e.code === 'Tab' || e.code === 'ArrowDown' || e.code === 'Enter') {
         navigate(e, 1);
     } else if (e.code === 'Escape') {
-        invoke('close');
+        invoke('clear');
     }
 });
 

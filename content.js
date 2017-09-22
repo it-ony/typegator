@@ -119,8 +119,8 @@
             typeNavi.search(parameter.query);
             callback && callback(null, typeNavi.getInfo());
         },
-        close: function() {
-            typeNavi.close();
+        clear: function() {
+            typeNavi.clear();
         },
         navigate: function(parameter, callback) {
             typeNavi.navigate(parameter.step);
