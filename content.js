@@ -1,20 +1,23 @@
 (function() {
-    if (window.typeNavi) {
+
+    let documentElement = document.documentElement;
+
+    if (documentElement.classList.contains('typegator')) {
         return;
     }
+    
+    documentElement.classList.add('typegator');
+
 
     function LinkSearch() {
         this.lastQuery = null;
         this.candidateNodes = [];
-        this.selectedNodeIndex = 0;
     }
 
-    let SELECTED_CLASS = 'search-candidate-selected';
     let CANDIDATE_CLASS = "search-candidate";
 
     Object.assign(LinkSearch.prototype, {
         search: function(query) {
-
             if (query === this.lastQuery) {
                 return;
             }
@@ -33,9 +36,14 @@
                 .filter(a => regex.test(a.innerText))
                 .filter(a => !!(a.offsetWidth || a.offsetHeight || a.getClientRects().length));
 
-            this.fixBounds();
-
-            this.highlightSelection();
+            return this.candidateNodes.map((a, index)=> {
+                return {
+                    text: a.innerText,
+                    href: a.href,
+                    title: a.title,
+                    index: index
+                };
+            });
         },
 
         clear: function() {
@@ -46,39 +54,22 @@
 
         clearSelection: function() {
             this.candidateNodes.forEach((a) => {
-                a.classList.remove(SELECTED_CLASS);
                 a.classList.remove(CANDIDATE_CLASS);
             })
         },
 
-        highlightSelection: function() {
-            this.candidateNodes.forEach((a, index) => {
-                if (this.selectedNodeIndex === index) {
-                    a.classList.add(SELECTED_CLASS);
-                    a.scrollIntoViewIfNeeded();
-                } else {
-                    a.classList.remove(SELECTED_CLASS);
-                }
-
-                a.classList.add(CANDIDATE_CLASS);
+        highlight: function(index) {
+            this.candidateNodes.forEach((a, i) => {
+                a.classList[i === index ? 'add' : 'remove'](CANDIDATE_CLASS);
             });
-        },
 
-        fixBounds: function() {
-            this.selectedNodeIndex = Math.min(Math.max(0, this.selectedNodeIndex), this.candidateNodes.length - 1);
-        },
-
-        navigate: function(step, callback) {
-            this.selectedNodeIndex += step;
-            this.fixBounds();
-
-            this.highlightSelection();
-
-            callback && callback(null, this.getInfo());
+            let node = this.candidateNodes[index];
+            node && node.scrollIntoViewIfNeeded();
         },
 
         open: function(options) {
-            let node = this.getSelectedNode();
+
+            let node = this.candidateNodes[options.index];
 
             if (!node) {
                 return;
@@ -96,13 +87,6 @@
             return this.candidateNodes[this.selectedNodeIndex]
         },
 
-        getInfo: function() {
-            return {
-                selectedIndex: this.selectedNodeIndex,
-                nodeCount: this.candidateNodes.length
-            }
-        },
-
         getNodes: function(selector) {
             return Array.prototype.slice.call(document.querySelectorAll(selector));
         },
@@ -116,18 +100,16 @@
 
     const methods = {
         search: function(parameter, callback) {
-            typeNavi.search(parameter.query);
-            callback && callback(null, typeNavi.getInfo());
+            callback(null, typeNavi.search(parameter.query));
         },
         clear: function() {
             typeNavi.clear();
         },
-        navigate: function(parameter, callback) {
-            typeNavi.navigate(parameter.step);
-            callback && callback(null, typeNavi.getInfo());
-        },
         open: function(parameter) {
             typeNavi.open(parameter);
+        },
+        highlight: function(parameter) {
+            typeNavi.highlight(parameter.index);
         }
     };
 

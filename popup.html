@@ -8,14 +8,11 @@
     <form autocomplete="off">
         <div class="search-container">
             <input id="search" placeholder="Search"/>
-            <span class="node-count"></span>
         </div>
-        <button class="previous">
-            <img src="icon/up.svg">
-        </button>
-        <button class="previous">
-            <img src="icon/down.svg">
-        </button>
+        <div id="results">
+            <ul data-category="link" id="links"></ul>
+            <ul data-category="tab" id="tabs"></ul>
+        </div>
     </form>
     <script src="popup.js"></script>
 </body>

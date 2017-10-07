@@ -1,11 +1,11 @@
 {
     "manifest_version": 2,
     "name": "type gator",
-    "version": "0.1.0",
-    "description": "Navigate web pages by typing",
+    "version": "0.2.0",
+    "description": "Navigate web pages and tabs by typing",
     "author": "Tony Findeisen",
     "permissions": [
-        "activeTab",
+        "tabs",
         "http://*/",
         "https://*/",
         "file://*/"
