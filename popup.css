@@ -65,6 +65,10 @@ li {
     padding-left: 2rem;
 }
 
+li br {
+    display: none;
+}
+
 li.active {
     background: #00BCE2;
     color: white;
