@@ -130,7 +130,15 @@ input.addEventListener('keyup', () => {
                 updateList(tabResults, values[1], 'tab');
 
                 currentAction = actionList[0];
-                currentAction && currentAction.select();
+                if (currentAction) {
+                    currentAction.select();
+
+                    invoke('highlight', {
+                        index: currentAction.item.index
+                    });
+                }
+
+
             });
 
     } else {
