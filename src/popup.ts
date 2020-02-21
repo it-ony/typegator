@@ -1,23 +1,45 @@
-let form        = document.querySelector('form'),
-    input       = document.querySelector('input'),
-    linkResults = document.querySelector('#results #links'),
-    tabResults  = document.querySelector('#results #tabs'),
-    tabId,
-    currentAction = null,
-    actionList = [],
-    currentQuery;
+let form: HTMLFormElement = document.querySelector('form')!!,
+    input: HTMLInputElement = document.querySelector('input')!!,
+    linkResults: HTMLUListElement = document.querySelector<HTMLUListElement>('#results #links')!!,
+    tabResults = document.querySelector('#results #tabs'),
+    tabId: number,
+    currentAction: Action | null = null,
+    actionList: Array<Action> = [],
+    currentQuery: string;
+
+class Action {
+    item: any;
+    private node: HTMLElement;
+
+    type: string;
+
+    constructor(item: any, node: HTMLElement, type: string) {
+        this.item = item;
+        this.node = node;
+        this.type = type;
+    }
+
+    select() {
+        this.node.classList.add('active');
+    }
+
+    deselect() {
+        this.node.classList.remove('active');
+    }
+}
+
 
 chrome.tabs.query({active: true, currentWindow: true}, tabs => {
-    tabId = tabs[0].id;
+    tabId = tabs[0].id!!;
 
     chrome.tabs.executeScript(tabId, {
-        file: 'content.js'
-    }, function() {
+        file: 'js/content.js'
+    }, function () {
         invoke('clear');
     });
 
     chrome.tabs.insertCSS(tabId, {
-        file: 'content.css'
+        file: 'css/content.css'
     });
 
 });
@@ -108,7 +130,7 @@ input.addEventListener('keyup', () => {
                 let regExp = new RegExp(query.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&"), "i");
 
                 resolve(tabs
-                    .filter(t => regExp.test(t.title) || regExp.test(t.url))
+                    .filter(t => regExp.test(t.title || "") || regExp.test(t.url || ""))
                     .map(t => {
                         return {
                             text: t.title,
@@ -147,7 +169,6 @@ input.addEventListener('keyup', () => {
 });
 
 
-
 function clear() {
     invoke('clear');
 
@@ -155,7 +176,7 @@ function clear() {
     updateList(tabResults);
 }
 
-function updateList(container, items, type) {
+function updateList(container, items = null, type: string = null) {
     while (container.childNodes.length) {
         container.removeChild(container.childNodes[0]);
     }
@@ -178,11 +199,13 @@ function updateList(container, items, type) {
         p.innerText = item.text;
         li.appendChild(p);
 
-        let div = document.createElement('div');
-        div.className = 'details';
-        div.innerText = item.href;
+        if (item.href) {
+            let div = document.createElement('div');
+            div.className = 'details';
+            div.innerText = item.href;
 
-        li.appendChild(div);
+            li.appendChild(div);
+        }
 
         container.appendChild(li);
 
@@ -190,28 +213,12 @@ function updateList(container, items, type) {
     });
 }
 
-function Action(item, node, type) {
-    this.item = item;
-    this.node = node;
-    this.type = type;
-}
 
-Object.assign(Action.prototype, {
-    select: function() {
-        this.node.classList.add('active');
-    },
-
-    deselect: function() {
-        this.node.classList.remove('active');
-    }
-});
-
-function invoke(method, parameter, callback) {
+function invoke(method: string, parameter: object = {}, callback?: (error: any, result: any) => void) {
     chrome.tabs.sendMessage(tabId, {
         method: method,
         parameter: parameter
     }, response => {
-        console.log(response);
         callback && callback(response.error, response.result);
     });
 }
