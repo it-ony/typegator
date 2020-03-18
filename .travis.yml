@@ -5,6 +5,8 @@ env:
   - secure: BrliKTOB8fn1XcWRplAE1idpC0CqszB/RNZu2yG7A79YTkSSP5XcMux4QA/WMuCkmvupQ7INQMWYry0uk/EplxzVQTRopZhySij1kty5dQP+PursHlUxxwsJ+d0DWrGlR5Cs26j7gu+CxLKndoic8tMOwO9YlipoQxQnG8ccgxiyb14Cw1kGmCwiOaIeJdjW4UhxEB6c+Ik9yBTdjpXXAulLtaVhSvY62lqKnYOD4mG5qgpTB/Hsv5z2XpWpzwKEwa3nt5VZ6dvbSEjeCx6rcDiev6ssMu4A/wA0jBp9COAbsIk8PfNvsS7JRoLeI0XVToMnXSjFUxFqxyKSKMzKX0AfnEYXmxZscDhgaRoWrPq/k61UHnBKhnPRx+WNcKDStn1a7JCehJphROz29wGS1qE2dvTOug/063nyUlk9yDyMDVHRYjKx/ktDikKdquoVoSM8S9PPY6F20NnRCncF/iFlLz+3L5Bfqv6LKMOMXJencSpLgNdhbWXrRQma0ixpmzgNdRew5uRny5sJWtOLfkCBDh7pfhFZ+HmMajwPa4dfbl1qkyK4JStQost4WW5Mw4gBZ8KoWzT0SCq4HALPnGgfkRkVpFp4AFyCIax/8jDpnFfQV/GejE2F3O4XtTB8swwgunYZcAoFl5kKc+9j+mFLqJdI3Dqd11zoPk9v8Bo=
   - EXTENSION_ID=ckofcgpflnnlncihdkfapmobjmmeloko
 language: node_js
+node_js:
+  - 12.16.1
 install: npm install -g yarn && yarn
 cache:
   - yarn
@@ -13,7 +15,5 @@ cache:
 #  - "/release\\/.*/"
 script:
 - yarn build
-before_deploy:
 - yarn add chrome-webstore-upload-cli
-deploy:
-  - ./node_modules/chrome-webstore-upload-cli/index.js upload --source=dist --extension-id="$EXTENSION_ID" --client-id="$clientid" --client-secret="$clientsecret" --refresh-token="$refreshtoken" --auto-publish
+- ./node_modules/chrome-webstore-upload-cli/index.js upload --source=dist --extension-id="$EXTENSION_ID" --client-id="$clientid" --client-secret="$clientsecret" --refresh-token="$refreshtoken" --auto-publish
