@@ -16,4 +16,4 @@ cache:
 script:
 - yarn build
 - yarn add chrome-webstore-upload-cli
-- ./node_modules/chrome-webstore-upload-cli/index.js upload --source=dist --extension-id="$EXTENSION_ID" --client-id="$clientid" --client-secret="$clientsecret" --refresh-token="$refreshtoken" --auto-publish
+- echo ${EXTENSION_ID}
