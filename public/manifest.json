@@ -1,18 +1,12 @@
 {
     "manifest_version": 2,
-    "name": "type gator",
-    "version": "0.2.0",
-    "description": "Navigate web pages and tabs by typing",
+    "name": "typegator",
+    "description": "Navigate web pages, tabs and windows by typing",
+    "version": "X.X.X",
     "author": "Tony Findeisen",
-    "permissions": [
-        "tabs",
-        "http://*/",
-        "https://*/",
-        "file://*/"
-    ],
     "background": {
         "scripts": [
-            "background.js"
+            "js/background.js"
         ]
     },
     "commands": {
@@ -23,6 +17,12 @@
             "description": "Start the type navigation"
         }
     },
+    "permissions": [
+        "tabs",
+        "http://*/",
+        "https://*/",
+        "file://*/"
+    ],
     "browser_action": {
         "default_title": "",
         "default_icon": "icon/16.png",
@@ -34,5 +34,3 @@
         "128": "icon/128.png"
     }
 }
-
-

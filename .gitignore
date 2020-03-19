@@ -2,5 +2,12 @@
 .idea/
 *.iml
 
+# assets
 *.afdesign
-typegator.zip
+*.zip
+
+# dependencies
+dist
+node_modules
+
+yarn.lock

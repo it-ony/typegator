@@ -1,30 +1,29 @@
-(function() {
+(function () {
 
-    let documentElement = document.documentElement;
+    const documentElement = document.documentElement;
+    const CANDIDATE_CLASS = "search-candidate";
 
     if (documentElement.classList.contains('typegator')) {
         return;
     }
-    
+
     documentElement.classList.add('typegator');
 
 
-    function LinkSearch() {
-        this.lastQuery = null;
-        this.candidateNodes = [];
-    }
+    class LinkSearch {
 
-    let CANDIDATE_CLASS = "search-candidate";
+        private lastQuery = null;
+        private candidateNodes = [];
+        private selectedNodeIndex: number;
 
-    Object.assign(LinkSearch.prototype, {
-        search: function(query) {
+        search(query) {
             if (query === this.lastQuery) {
-                return;
+                return undefined;
             }
 
             if (query === '') {
                 this.clear();
-                return;
+                return undefined;
             }
 
             const regex = this.createRegex(query);
@@ -32,11 +31,11 @@
             this.lastQuery = query;
             this.clearSelection();
 
-            this.candidateNodes = this.getNodes("a")
+            this.candidateNodes = this.getNodes("a,button")
                 .filter(a => regex.test(a.innerText))
                 .filter(a => !!(a.offsetWidth || a.offsetHeight || a.getClientRects().length));
 
-            return this.candidateNodes.map((a, index)=> {
+            return this.candidateNodes.map((a, index) => {
                 return {
                     text: a.innerText,
                     href: a.href,
@@ -44,30 +43,30 @@
                     index: index
                 };
             });
-        },
+        }
 
-        clear: function() {
+        clear() {
             this.selectedNodeIndex = 0;
             this.clearSelection();
             this.candidateNodes = [];
-        },
+        }
 
-        clearSelection: function() {
+        clearSelection () {
             this.candidateNodes.forEach((a) => {
                 a.classList.remove(CANDIDATE_CLASS);
             })
-        },
+        }
 
-        highlight: function(index) {
+        highlight (index) {
             this.candidateNodes.forEach((a, i) => {
                 a.classList[i === index ? 'add' : 'remove'](CANDIDATE_CLASS);
             });
 
             let node = this.candidateNodes[index];
             node && node.scrollIntoViewIfNeeded();
-        },
+        }
 
-        open: function(options) {
+        open (options) {
 
             let node = this.candidateNodes[options.index];
 
@@ -81,34 +80,38 @@
             node.dispatchEvent(evt);
 
             this.clear();
-        },
+        }
 
-        getSelectedNode: function() {
+        getSelectedNode () {
             return this.candidateNodes[this.selectedNodeIndex]
-        },
+        }
 
-        getNodes: function(selector) {
+        getNodes (selector) {
             return Array.prototype.slice.call(document.querySelectorAll(selector));
-        },
+        }
 
-        createRegex: function(search) {
+        createRegex (search) {
             return new RegExp(search.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&"), "i");
         }
+    }
+
+    Object.assign(LinkSearch.prototype, {
+
     });
 
-    const typeNavi = window.keyNavi = new LinkSearch();
+    const typeNavi = window["keyNavi"] = new LinkSearch();
 
     const methods = {
-        search: function(parameter, callback) {
+        search: function (parameter, callback) {
             callback(null, typeNavi.search(parameter.query));
         },
-        clear: function() {
+        clear: function () {
             typeNavi.clear();
         },
-        open: function(parameter) {
+        open: function (parameter) {
             typeNavi.open(parameter);
         },
-        highlight: function(parameter) {
+        highlight: function (parameter) {
             typeNavi.highlight(parameter.index);
         }
     };
@@ -127,7 +130,7 @@
                 error: `Method '${methodName}' not found`
             });
         } else {
-            return method(parameter, function(err, result) {
+            return method(parameter, function (err, result) {
                 sendResponse({
                     error: err,
                     result: result
