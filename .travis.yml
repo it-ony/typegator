@@ -1,0 +1,16 @@
+env:
+  global:
+  - EXTENSION_ID=ckofcgpflnnlncihdkfapmobjmmeloko
+language: node_js
+node_js:
+  - 12.16.1
+install: npm install -g yarn && yarn
+cache:
+  - yarn
+#branches:
+#  only:
+#  - "/release\\/.*/"
+script:
+- yarn build
+- yarn add chrome-webstore-upload-cli
+- ./node_modules/chrome-webstore-upload-cli/index.js upload --source=dist --extension-id=${EXTENSION_ID} --client-id=${CLIENT_ID} --client-secret=${CLIENT_SECRET} --refresh-token=${REFRESH_TOKEN} --auto-publish
