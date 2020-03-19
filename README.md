@@ -1,4 +1,4 @@
-![Typegator logo](/icon/128.png?raw=true)
+![Typegator logo](/public/icon/128.png?raw=true)
 
 Navigate through web pages by typing instead using the mouse.
 
