@@ -1,7 +1,10 @@
 (function () {
 
     const documentElement = document.documentElement;
+
+
     const CANDIDATE_CLASS = "search-candidate";
+    const CANDIDATE_CLASS_SELECTED = "search-candidate-selected";
 
     if (documentElement.classList.contains('typegator')) {
         return;
@@ -35,6 +38,10 @@
                 .filter(a => regex.test(a.innerText))
                 .filter(a => !!(a.offsetWidth || a.offsetHeight || a.getClientRects().length));
 
+            this.candidateNodes.forEach(n => {
+                n.classList.add(CANDIDATE_CLASS);
+            });
+
             return this.candidateNodes.map((a, index) => {
                 return {
                     text: a.innerText,
@@ -54,12 +61,13 @@
         clearSelection () {
             this.candidateNodes.forEach((a) => {
                 a.classList.remove(CANDIDATE_CLASS);
+                a.classList.remove(CANDIDATE_CLASS_SELECTED);
             })
         }
 
         highlight (index) {
             this.candidateNodes.forEach((a, i) => {
-                a.classList[i === index ? 'add' : 'remove'](CANDIDATE_CLASS);
+                a.classList[i === index ? 'add' : 'remove'](CANDIDATE_CLASS_SELECTED);
             });
 
             let node = this.candidateNodes[index];

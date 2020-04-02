@@ -1,8 +1,14 @@
+$candidateColor: rgba(yellow, 0.1);
+$selectedColor: yellow;
+
 .search-candidate {
-  background-color: yellow !important;
-  background-image: linear-gradient(-180deg, yellow, yellow) !important;
+
+  //background-color: $candidateColor !important;
+  //background-image: linear-gradient(-180deg, $candidateColor, $candidateColor) !important;
+  outline: 1px solid $selectedColor;
 }
 
 .search-candidate-selected {
-  background-color: orange !important;
+  background-color: $selectedColor !important;
+  background-image: linear-gradient(-180deg, $selectedColor, $selectedColor) !important;
 }
