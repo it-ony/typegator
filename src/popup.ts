@@ -21,6 +21,8 @@ class Action {
 
     select() {
         this.node.classList.add('active');
+        // @ts-ignore
+        this.node.scrollIntoViewIfNeeded();
     }
 
     deselect() {
@@ -47,7 +49,6 @@ chrome.tabs.query({active: true, currentWindow: true}, tabs => {
 form.addEventListener('submit', e => {
     e.preventDefault();
 });
-
 
 window.addEventListener('keydown', e => {
 
