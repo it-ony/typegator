@@ -1,3 +1,5 @@
+import {Query, QueryType} from "./query";
+
 let form: HTMLFormElement = document.querySelector('form')!!,
     input: HTMLInputElement = document.querySelector('input')!!,
     linkResults: HTMLUListElement = document.querySelector<HTMLUListElement>('#results #links')!!,
@@ -5,7 +7,7 @@ let form: HTMLFormElement = document.querySelector('form')!!,
     tabId: number,
     currentAction: Action | null = null,
     actionList: Array<Action> = [],
-    currentQuery: string;
+    currentQuery: Query = Query.EMPTY;
 
 class Action {
     item: any;
@@ -109,26 +111,26 @@ window.addEventListener('keydown', e => {
  * handle search query
  */
 input.addEventListener('keyup', () => {
-    let query = input.value.trim();
 
-    if (currentQuery === query) {
+    const query = Query.parse(input.value.trim());
+
+    if (currentQuery.equals(query)) {
         return;
     }
 
     currentQuery = query;
 
-
-    if (query) {
+    if (query.search) {
 
         let searchLinks = new Promise((resolve, reject) => {
-            invoke('search', {query: query}, (err, results) => {
+            invoke('search', {query: query.search}, (err, results) => {
                 err ? reject(err) : resolve(results);
             });
         });
 
         let searchTabs = new Promise(resolve => {
             chrome.tabs.query({}, tabs => {
-                let regExp = new RegExp(query.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&"), "i");
+                let regExp = new RegExp(query.search.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&"), "i");
 
                 resolve(tabs
                     .filter(t => regExp.test(t.title || "") || regExp.test(t.url || ""))
@@ -144,8 +146,21 @@ input.addEventListener('keyup', () => {
             });
         });
 
+        let empty = new Promise(resolve => {
+            resolve([]);
+        });
+
+        let searchFor = [];
+        if (query.type === undefined) {
+            searchFor = [searchLinks, searchTabs];
+        } else if (query.type === QueryType.Link) {
+            searchFor = [searchLinks, empty];
+        } else if (query.type === QueryType.Tab) {
+            searchFor = [empty, searchTabs];
+        }
+
         Promise
-            .all([searchLinks, searchTabs])
+            .all(searchFor)
             .then(values => {
 
                 actionList = [];

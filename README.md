@@ -18,4 +18,13 @@ the previous one.
 Open the selected link with `CMD + Enter` in the background, in a new window with `Shift + Enter` 
 or in the foreground by pressing `CMD + Shift + Enter`.
 
- 
+## Search
+
+The search knows these types of groups
+* l - link
+* t - tab
+
+To search in all groups simply type a keyword you like to search for. 
+To search in specific group use the abbreviation followed by a `:` and the search term, e.g.
+* `l:foo` to only search for links containing foo
+* `t:bar` to only search for tabs containing bar  
