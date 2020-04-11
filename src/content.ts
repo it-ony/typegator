@@ -1,3 +1,4 @@
+
 (function () {
 
     const documentElement = document.documentElement;
@@ -34,18 +35,70 @@
             this.lastQuery = query;
             this.clearSelection();
 
-            this.candidateNodes = this.getNodes("a,button")
-                .filter(a => regex.test(a.innerText))
-                .filter(a => !!(a.offsetWidth || a.offsetHeight || a.getClientRects().length));
+            const nodes = this.getNodes("a,button,[role='button'],[role='tab']")
+                .map(node => {
+
+                    function createEntry(text: string) {
+
+                        text = (text || "").trim();
+
+                        if (!regex.test(text)) {
+                            return false;
+                        }
+
+                        let action = node.getAttribute("aria-haspopup");
+                        action = (action === "true" ? "menu" : action);
+
+                        if (!action && node.getAttribute("role") == "tab") {
+                            action = "tab";
+                        }
+
+                        let details = node.href || node.getAttribute("aria-label") || node.getAttribute("title") || action;
+
+                        let img;
+
+                        let svg = node.querySelector("svg[class*=icon]");
+                        if (svg) {
+                            svg = svg.cloneNode(true);
+                            svg.setAttribute("width", "100%");
+                            svg.setAttribute("height", "100%");
+                            
+                            let icon = window.btoa(new XMLSerializer().serializeToString(svg));
+                            img = "data:image/svg+xml;base64," + icon;
+                        }
+
+                        if (["menu", "tree", "tab"].indexOf(action) !== -1) {
+                            img = chrome.extension.getURL('/img/' + action + ".svg");
+                        }
+
+                        return {
+                            text: text,
+                            href: details,
+                            node: node,
+                            img: img
+                        };
+                    }
+
+                    return createEntry(node.innerText) || createEntry(node.getAttribute("aria-label"));
+
+                })
+                .filter(a => a !== false)
+                .filter(a => {
+                    const node = a.node;
+                    return !!(node.offsetWidth || node.offsetHeight || node.getClientRects().length)
+                });
+
+            this.candidateNodes = nodes.map(a => a.node);
 
             this.candidateNodes.forEach(n => {
                 n.classList.add(CANDIDATE_CLASS);
             });
 
-            return this.candidateNodes.map((a, index) => {
+            return nodes.map((a, index) => {
                 return {
-                    text: a.innerText,
+                    text: a.text,
                     href: a.href,
+                    img: a.img,
                     title: a.title,
                     index: index
                 };
@@ -58,14 +111,14 @@
             this.candidateNodes = [];
         }
 
-        clearSelection () {
+        clearSelection() {
             this.candidateNodes.forEach((a) => {
                 a.classList.remove(CANDIDATE_CLASS);
                 a.classList.remove(CANDIDATE_CLASS_SELECTED);
             })
         }
 
-        highlight (index) {
+        highlight(index) {
             this.candidateNodes.forEach((a, i) => {
                 a.classList[i === index ? 'add' : 'remove'](CANDIDATE_CLASS_SELECTED);
             });
@@ -74,7 +127,7 @@
             node && node.scrollIntoViewIfNeeded();
         }
 
-        open (options) {
+        open(options) {
 
             let node = this.candidateNodes[options.index];
 
@@ -90,22 +143,20 @@
             this.clear();
         }
 
-        getSelectedNode () {
+        getSelectedNode() {
             return this.candidateNodes[this.selectedNodeIndex]
         }
 
-        getNodes (selector) {
+        getNodes(selector) {
             return Array.prototype.slice.call(document.querySelectorAll(selector));
         }
 
-        createRegex (search) {
+        createRegex(search) {
             return new RegExp(search.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&"), "i");
         }
     }
 
-    Object.assign(LinkSearch.prototype, {
-
-    });
+    Object.assign(LinkSearch.prototype, {});
 
     const typeNavi = window["keyNavi"] = new LinkSearch();
 
