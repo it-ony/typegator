@@ -1,11 +1,15 @@
+$search-height: 2.5rem;
+
 html {
   width: 400px;
   font-family: 'Helvetica Neue', sans-serif;
   color: #333333;
+  min-height: $search-height;
 }
 
 body {
   padding: 0;
+  margin: 0;
 }
 
 :focus {
@@ -16,18 +20,32 @@ body {
   color: #ccc;
 }
 
-#search {
-  font-size: 1.5rem;
-  border: 0 none;
+#search-container {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 2rem;
+  z-index: 2;
+
+  input {
+    $font-size: 1.5rem;
+    padding: ($search-height - $font-size) / 2;
+    font-size: $font-size;
+    height: $search-height;
+    width: 100%;
+    box-sizing: border-box;
+    border: 0 none;
+  }
+  
 }
 
 #results {
-  margin-top: 0.5em;
+  margin-top: $search-height;
 
   ul {
     list-style: none;
     padding: 0;
-    margin: .5em -.5em;
+    margin: .5em 0;
   }
 
   p {
@@ -41,6 +59,9 @@ body {
       display: block;
       padding-left: .5rem;
       border-radius: 2px;
+      top: $search-height;
+      position: sticky;
+      z-index: 1;
     }
 
     &:empty {
