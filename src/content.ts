@@ -38,49 +38,47 @@
             const nodes = this.getNodes("a,button,[role='button'],[role='tab']")
                 .map(node => {
 
-                    function createEntry(text: string) {
+                    let text = node.innerText || node.getAttribute("aria-label") || node.title;
+                    text = (text || "").trim();
 
-                        text = (text || "").trim();
-
-                        if (!regex.test(text)) {
-                            return false;
-                        }
-
-                        let action = node.getAttribute("aria-haspopup");
-                        action = (action === "true" ? "menu" : action);
-
-                        if (!action && node.getAttribute("role") == "tab") {
-                            action = "tab";
-                        }
-
-                        let details = node.href || node.getAttribute("aria-label") || node.getAttribute("title") || action;
-
-                        let img;
-
-                        let svg = node.querySelector("svg[class*=icon]");
-                        if (svg) {
-                            svg = svg.cloneNode(true);
-                            svg.setAttribute("width", "100%");
-                            svg.setAttribute("height", "100%");
-                            
-                            let icon = window.btoa(new XMLSerializer().serializeToString(svg));
-                            img = "data:image/svg+xml;base64," + icon;
-                        }
-
-                        if (["menu", "tree", "tab"].indexOf(action) !== -1) {
-                            img = chrome.extension.getURL('/img/' + action + ".svg");
-                        }
-
-                        return {
-                            text: text,
-                            href: details,
-                            node: node,
-                            img: img
-                        };
+                    if (!regex.test(text)) {
+                        return false;
                     }
 
-                    return createEntry(node.innerText) || createEntry(node.getAttribute("aria-label"));
+                    let action = node.getAttribute("aria-haspopup");
+                    action = (action === "true" ? "menu" : action);
 
+                    if (!action && node.getAttribute("role") == "tab") {
+                        action = "tab";
+                    }
+
+                    let details = [node.href,  node.getAttribute("aria-label"),  node.getAttribute("title"), node.getAttribute("value"), action]
+                        .filter(x => x && x !== text)[0] || "";
+
+
+                    let img;
+
+                    let svg = node.querySelector("svg[class*=icon]");
+                    if (svg) {
+                        svg = svg.cloneNode(true);
+                        svg.setAttribute("width", "100%");
+                        svg.setAttribute("height", "100%");
+
+                        let icon = window.btoa(new XMLSerializer().serializeToString(svg));
+                        img = "data:image/svg+xml;base64," + icon;
+                    }
+
+                    if (["menu", "tree", "tab"].indexOf(action) !== -1) {
+                        img = chrome.extension.getURL('/img/' + action + ".svg");
+                    }
+
+                    return {
+                        text: text,
+                        href: details,
+                        node: node,
+                        img: img
+                    };
+                    
                 })
                 .filter(a => a !== false)
                 .filter(a => {
@@ -186,16 +184,21 @@
             });
         } else {
 
-            method(parameter, function (err, result) {
-                sendResponse({
-                    error: err,
-                    result: result
+            try {
+                method(parameter, function (err, result) {
+                    sendResponse({
+                        error: err,
+                        result: result
+                    });
                 });
-            });
+            } catch (e) {
+                console.error(e);
+            }
             
         }
 
-        return method && method.length === 2;
+        return true;
+        // return method && method.length === 2;
     });
 
     methods.clear();
