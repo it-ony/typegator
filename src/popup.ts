@@ -91,7 +91,7 @@ window.addEventListener('keydown', e => {
     }
 
     function selectItem(step) {
-        // up
+
         e.preventDefault();
         e.stopImmediatePropagation();
 
@@ -99,11 +99,13 @@ window.addEventListener('keydown', e => {
             currentAction.deselect();
             currentAction = actionList[index + step];
             currentAction.select();
+
+            invoke('highlight', {
+                index: currentAction.item.index
+            });
         }
 
-        invoke('highlight', {
-            index: currentAction.item.index
-        });
+
     }
 
 }, true);
@@ -182,15 +184,18 @@ input.addEventListener('keyup', () => {
             });
 
     } else {
-        clear();
+        clear(false);
     }
 });
 
 
-function clear() {
+function clear(clearInput:boolean = true) {
 
     invoke('clear');
-    input.value = "";
+
+    if (clearInput) {
+        input.value = "";
+    }
 
     updateList(linkResults);
     updateList(tabResults);
@@ -241,6 +246,7 @@ function invoke(method: string, parameter: object = {}, callback?: (error: any, 
         method: method,
         parameter: parameter
     }, response => {
+        console.debug("got response", response);
         callback && callback(response.error, response.result);
     });
 }
