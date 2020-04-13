@@ -137,7 +137,7 @@ input.addEventListener('keyup', () => {
                 let regExp = new RegExp(query.search.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&"), "i");
 
                 resolve(tabs
-                    .filter(t => regExp.test(t.title || "") || regExp.test(t.url || ""))
+                    .filter(t => query.search === "*" || regExp.test(t.title || "") || regExp.test(t.url || ""))
                     .map(t => {
                         return {
                             text: t.title,

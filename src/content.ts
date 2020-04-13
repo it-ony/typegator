@@ -41,7 +41,7 @@
                     let text = node.innerText || node.getAttribute("aria-label") || node.title;
                     text = (text || "").trim();
 
-                    if (!regex.test(text)) {
+                    if (query !== '*' && !regex.test(text)) {
                         return false;
                     }
 

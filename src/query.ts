@@ -15,6 +15,10 @@ export class Query {
     private constructor(search: string, type: QueryType | undefined) {
         this._search = search;
         this._type = type;
+
+        if (type !== undefined && search === "") {
+            this._search = "*";
+        }
     }
 
 
