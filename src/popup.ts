@@ -1,5 +1,6 @@
 import {Query, QueryType} from "./query";
 
+
 let form: HTMLFormElement = document.querySelector('form')!!,
     input: HTMLInputElement = document.querySelector('input')!!,
     linkResults: HTMLUListElement = document.querySelector<HTMLUListElement>('#results #links')!!,
@@ -32,14 +33,11 @@ class Action {
     }
 }
 
-
 chrome.tabs.query({active: true, currentWindow: true}, tabs => {
     tabId = tabs[0].id!!;
 
     chrome.tabs.executeScript(tabId, {
         file: 'js/content.js'
-    }, function () {
-        invoke('clear');
     });
 
     chrome.tabs.insertCSS(tabId, {
@@ -75,16 +73,20 @@ window.addEventListener('keydown', e => {
             });
 
         } else if (currentAction.type === 'tab') {
+
             chrome.tabs.update(currentAction.item.tabId, {
                 active: true
             });
             chrome.windows.update(currentAction.item.windowId, {
                 focused: true
-            })
+            });
+
+            window.close();
+
         }
 
         clear();
-        window.close();
+
 
     }
 
@@ -186,7 +188,9 @@ input.addEventListener('keyup', () => {
 
 
 function clear() {
+
     invoke('clear');
+    input.value = "";
 
     updateList(linkResults);
     updateList(tabResults);
@@ -231,6 +235,8 @@ function updateList(container, items = null, type: string = null) {
 
 
 function invoke(method: string, parameter: object = {}, callback?: (error: any, result: any) => void) {
+    console.debug(`invoke method ${method}`);
+    
     chrome.tabs.sendMessage(tabId, {
         method: method,
         parameter: parameter

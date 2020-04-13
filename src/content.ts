@@ -143,10 +143,6 @@
             this.clear();
         }
 
-        getSelectedNode() {
-            return this.candidateNodes[this.selectedNodeIndex]
-        }
-
         getNodes(selector) {
             return Array.prototype.slice.call(document.querySelectorAll(selector));
         }
@@ -158,20 +154,20 @@
 
     Object.assign(LinkSearch.prototype, {});
 
-    const typeNavi = window["keyNavi"] = new LinkSearch();
+    const linkSearch = new LinkSearch();
 
     const methods = {
         search: function (parameter, callback) {
-            callback(null, typeNavi.search(parameter.query));
+            callback(null, linkSearch.search(parameter.query));
         },
         clear: function () {
-            typeNavi.clear();
+            linkSearch.clear();
         },
         open: function (parameter) {
-            typeNavi.open(parameter);
+            linkSearch.open(parameter);
         },
         highlight: function (parameter) {
-            typeNavi.highlight(parameter.index);
+            linkSearch.highlight(parameter.index);
         }
     };
 
@@ -189,14 +185,20 @@
                 error: `Method '${methodName}' not found`
             });
         } else {
-            return method(parameter, function (err, result) {
+
+            method(parameter, function (err, result) {
                 sendResponse({
                     error: err,
                     result: result
                 });
             });
+            
         }
+
+        return method && method.length === 2;
     });
+
+    methods.clear();
 
 })();
 
